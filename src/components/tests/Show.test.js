@@ -5,22 +5,74 @@ import userEvent from '@testing-library/user-event';
 import Show from './../Show';
 
 const testShow = {
-    //add in approprate test data structure here.
+    name: "test show",
+    summary: "what a show",
+    seasons: [
+    {id:0, name: "Season 1", episodes: []},
+    {id:1, name: "Season 2", episodes: []}, 
+    {id:2, name: "Season 3", episodes: []}, 
+    ]
 }
 
 test('renders testShow and no selected Season without errors', ()=>{
+    // Arrange
+    render(<Show show={testShow} selectedSeason={"none"}/>);
+    const test = screen.queryByText(/test show/i);
+
+    // Act
+
+    // Assert
+    expect(test).toBeInTheDocument();
 });
 
 test('renders Loading component when prop show is null', () => {
+    // Arrange
+    render(<Show show={null} />);
+    const loading = screen.queryByText(/Fetching data.../i);
+
+    // Act
+
+    // Assert
+    expect(loading).toHaveTextContent(/Fetching data.../i);
 });
 
 test('renders same number of options seasons are passed in', ()=>{
+    // Arrange
+    render(<Show show={testShow} selectedSeason={"none"}/>);
+    const options = screen.getAllByTestId('season-option')
+
+    // Act
+
+    // Assert
+    expect(options).toHaveLength(3);
 });
 
 test('handleSelect is called when an season is selected', () => {
+    // Arrange
+    const mockSeasons = jest.fn();
+    render(<Show handleSelect={mockSeasons} show={testShow} selectedSeason={"none"} />)
+
+    // Act
+    userEvent.selectOptions(screen.getByLabelText("Select A Season"), ["1"]);
+
+    // Assert
+    expect(mockSeasons).toHaveBeenCalled();
 });
 
 test('component renders when no seasons are selected and when rerenders with a season passed in', () => {
+    // Arrange
+    const mockSeason = jest.fn();
+    const {rerender} = render(<Show show={testShow} handleSelect={mockSeason} selectedSeason={"none"}/>)
+    const seasons = screen.getByLabelText("Select A Season");
+    rerender(<Show show={testShow} selectedSeason={1}/>);
+
+    // Act
+
+    // Assert
+    expect(seasons).toBeInTheDocument();
+    
+    
+    
 });
 
 //Tasks:
